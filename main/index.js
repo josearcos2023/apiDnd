@@ -1,12 +1,29 @@
 const express = require('express');
-const racesRoutes = require('../routes/routes');
-
 const app = express();
-const port = 3000;
+const sequelize = require('../conf/sequelize');
+const cors = require('cors');
+
+const Class = require('../models/class');
+const Race = require('../models/race');
+const Character = require('../models/character');
+
+const charactersRouter = require('../routes/character');
+const racesRouter = require('../routes/races');
 
 app.use(express.json());
-app.use('/api', racesRoutes);
 
-app.listen(port, () => {
-    console.log(`API is running at http://localhost:${port}`);
+app.use(cors());
+
+app.use('/api/characters', charactersRouter);
+app.use('/api/races', racesRouter);
+
+sequelize.sync()
+  .then(() => {
+    console.log('Database synced');
+  })
+  .catch(err => console.error('Error syncing database:', err));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
