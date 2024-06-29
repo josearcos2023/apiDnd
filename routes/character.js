@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Character = require('../models/character');
+const Race = require('../models/race');
+const Class = require('../models/class');
 
 router.get('/', async (req, res) => {
   try {
-    const characters = await Character.findAll();
+    const characters = await Character.findAll({
+        include: [Race,Class]
+    });
     res.json(characters);
   } catch (err) {
     res.status(500).json({ error: err.message });
